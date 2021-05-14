@@ -672,7 +672,7 @@ var score_summary = [
 		lowerBound: 19,
 		upperBound: 29,
 		symptomSeverity: "Moderate depression",
-		Comments: "Scores in the 19-29 range are indicative of <b>mpderate depression</b> levels."
+		Comments: "Scores in the 19-29 range are indicative of <b>moderate depression</b> levels."
 	},
 	{
 		lowerBound: 30,

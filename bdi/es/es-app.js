@@ -750,7 +750,8 @@ var score_summary = [
         symptomSeverity: "Depresión mínima",
         Comments: "Las puntuaciones en el rango de 0 a 9 indican niveles de <b> depresión mínima </b>.",
 		symptomSeverity_en: "Minimal depression",
-		Comments_en: "Scores in the 0-9 range are indicative of <b>minimal depression</b> levels."
+		Comments_en: "Scores in the 0-9 range are indicative of <b>minimal depression</b> levels.",
+		class: "blueItem"
 	},
 	{
 		lowerBound: 10,
@@ -758,7 +759,8 @@ var score_summary = [
         symptomSeverity: "Depresion ligera",
         Comments: "Las puntuaciones en el rango de 10-18 indican niveles de <b> depresión leve </b>.",
 		symptomSeverity_en: "Mild depression",
-		Comments_en: "Scores in the 10-18 range are indicative of <b>mild depression</b> levels."
+		Comments_en: "Scores in the 10-18 range are indicative of <b>mild depression</b> levels.",
+		class: "greenItem"
 	},
 	{
 		lowerBound: 19,
@@ -766,7 +768,8 @@ var score_summary = [
         symptomSeverity: "Depresión moderada",
         Comments: "Las puntuaciones en el rango de 19 a 29 indican niveles de <b> depresión moderada </b>.",
 		symptomSeverity_en: "Moderate depression",
-		Comments_en: "Scores in the 19-29 range are indicative of <b>moderate depression</b> levels."
+		Comments_en: "Scores in the 19-29 range are indicative of <b>moderate depression</b> levels.",
+		class: "orangeItem"
 	},
 	{
 		lowerBound: 30,
@@ -774,7 +777,8 @@ var score_summary = [
         symptomSeverity: "Depresión severa",
         Comments: "Las puntuaciones en el rango de 30+ son indicativas  <b>de niveles de depresión  </b> grave.",
 		symptomSeverity_en: "Severe depression",
-		Comments_en: "Scores in the 30+ range are indicative of <b>severe depression</b> levels."
+		Comments_en: "Scores in the 30+ range are indicative of <b>severe depression</b> levels.",
+		class: "redItem"
 	}
 ]
 
@@ -891,13 +895,20 @@ $('.radio-value-btn').mousedown(function () {
 	var this_group = classArr[0];
 	var prompt_values = findValueSet(this_group);
 
+	var groupArr = this_group.trim().split("group");
+	var prompt_index = groupArr[1];
+
 	if ($(this).hasClass('active')) {
 		// doing nothing, since it is a case of clcking on already checked radio button 
 	} else {
 		total -= findValueWeight(prompt_values, $('.' + this_group + '.active').text());
 		$('.' + this_group).removeClass('active');
 		$(this).addClass('active');
-		total += findValueWeight(prompt_values, $(this).text());
+		//total += findValueWeight(prompt_values, $(this).text());
+		var selected_weight = findValueWeight(prompt_values, $(this).text());
+		total += selected_weight;
+		prompts[prompt_index].selected_weight = selected_weight;
+
 	}
 	console.warn(total);
 })
@@ -912,11 +923,13 @@ $('#submit-btn').click(function () {
 
 	var symptomSeverity = '';
 	var Comments = '';
+	var selected_summary = '';
 
 	for (var i = 0; i < score_summary.length; i++) {
 		if (score_summary[i].lowerBound <= total && total <= score_summary[i].upperBound) {
 			symptomSeverity = score_summary[i].symptomSeverity;
 			Comments = score_summary[i].Comments;
+			selected_summary = score_summary[i];
 			break;
 		}
 	}
@@ -926,7 +939,16 @@ $('#submit-btn').click(function () {
 	//emailBody = `Hi,\nRecently I have tested my Depression level in https://www.savantcare.com/bdi/ .\nMy depression score is '${total}' and level is: '${$.trim(symptomSeverity)}'.
 	//`;
 
-	document.getElementById('results').innerHTML = 'Your BDI score is : <b>' + total + '</b><br>' + Comments;
+	// document.getElementById('results').innerHTML = 'Your BDI score is : <b>' + total + '</b><br>' + Comments;
+
+	var resultGraphData = fnGenerateresultGraph(total, selected_summary);
+	var symptomsDetail = fnGetSymptomsDetail();
+
+	var result_data = 'Tu puntaje BDI es : <b>' + total + '</b><br>' + Comments;
+	$('#results').html(result_data);
+	$('#resultGraph').html(resultGraphData);
+	$('#symptoms_info').html(symptomsDetail);
+
 
 	emailBody = `Hi,\nRecently I have tested my BDI score in https://www.savantcare.com/bdi/ .\nMy BDI score is '${total}' and it indicates '${symptomSeverity}' level.
 	`;
@@ -950,6 +972,62 @@ $('#retake-btn').click(function () {
 	$('.results').addClass('hide');
 	$('.results').removeClass('show');
 })
+
+
+
+function fnGenerateresultGraph(total, selected_summary) {
+
+	var graphItem = '<div class="graphItem '+ selected_summary.class+'"></div>';
+	var graphEmptyItem = '<div class="graphEmptyItem"></div>';
+	var graphData = '';
+	var maxScoreWeignt =  67;
+	//var totalScoreWeignt =  123;
+	var totalWeighInGraph =  parseInt(total/maxScoreWeignt*100);
+	var totalEmptyWeighInGraph = 100 - totalWeighInGraph;
+
+	for (var i = 0; i < totalWeighInGraph; i++) {
+		graphData += graphItem;
+	}
+
+	for (var i = 0; i < totalEmptyWeighInGraph; i++) {
+		graphData += graphEmptyItem;
+	}
+
+	return graphData;
+}
+
+function fnGetSymptomsDetail() {
+
+	var tableData = '';
+	tableData += '<table class="table table-striped" style="width:75%;">'+
+		'<thead>'+
+		'<tr><th>Síntoma</th><th> </th><th>Puntaje</th> </tr>'+
+		'</thead>'+
+		'<tbody>';
+
+	for (var i = 0; i < prompts.length; i++) {
+
+		if (typeof prompts[i].selected_weight === "undefined") {
+			tableData += '<tr><td colspan="3" >'+(i+1)+'. '+prompts[i].prompt+'</td></tr>';
+		} else if(prompts[i].selected_weight == 0) {
+			tableData += '<tr><td colspan="3" >'+(i+1)+'. '+prompts[i].prompt+'</td></tr>';
+		}
+		else {
+			var graphBadge = '';
+			//var badgeColor =  getBadgeColor(prompts[i].selected_weight);
+			
+			for (var j = 0; j < prompts[i].selected_weight; j++) {
+				 graphBadge += '<span class="graphItem redItem"></span>';
+			}
+			tableData += '<tr>'+
+			'<td >'+(i+1)+'. '+prompts[i].prompt+'</td>'+
+			'<td>'+graphBadge+'</td>'+
+			'<td>'+prompts[i].selected_weight+'</td></tr>';
+		}
+	}
+	tableData += '</tbody></table>';
+	return tableData;
+}
 
 // Share score via email
 function getMailtoUrl(to, subject, body) {

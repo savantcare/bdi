@@ -69,7 +69,45 @@
 
     </div>
     <div class="container text-center results hide">
-        <p id="results"></p>
+        <!-- <p id="results"></p> -->
+
+        <div class="resultBox">   
+            <!-- <p >Your BDI score is : <b>76</b></p>    -->
+            <!-- <p>Scores in the 60-100 range are indicative of <b>severe depression</b> levels.</p> -->
+
+            <div id="results"></div>
+            <div  id="resultGraph" class="resultGraph graybox"></div>
+            <br />
+
+            <div class="progress">
+                <div class="progress-bar blueItem" style="width: 16%">
+                  <span class="sr-only">16% Complete (success)</span>
+                </div>
+                <div class="progress-bar greenItem progress-bar-striped" style="width: 14%">
+                  <span class="sr-only">14% Complete (warning)</span>
+                </div>
+                <div class="progress-bar orangeItem" style="width: 15%">
+                  <span class="sr-only">15% Complete (danger)</span>
+                </div>
+                <div class="progress-bar redItem" style="width: 55%">
+                  <span class="sr-only">55% Complete (danger)</span>
+                </div>
+            </div>
+
+            <br />
+            <div class="graph_info">
+                <p><span class="graphItem blueItem"></span> — न्यूनतम</p>
+                <p><span class="graphItem greenItem"></span> — सौम्य</p>
+                <p><span class="graphItem orangeItem"></span> — मध्यम</p>
+                <p><span class="graphItem redItem"></span> — गंभीर</p>
+
+            </div>
+
+            <p> &nbsp;</p>
+            <p> <b> व्यक्तिगत लक्षण: </b></p>
+            <div id="symptoms_info"></div>
+                        
+        </div>
     </div>
 
     <div class="container text-center bottom">

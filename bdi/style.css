@@ -166,3 +166,69 @@
 	.headerText h1 {font-size: 150%}
 	.headerText h5 {font-size: 90%}
 }
+
+
+
+
+/* css for result page progress bar UI*/
+.resultBox {
+	border: 1px solid #ddd;
+	padding: 15px;
+	box-sizing: border-box;
+	box-shadow: 0 0 10px #ddd;
+}
+.resultGraph {
+	display: flex;
+}
+.graphItem {
+	width: 15px;
+	height: 30px;
+	margin-right: 2px;
+}
+
+.graphEmptyItem {
+	width: 15px;
+	height: 30px;
+	margin-right: 2px;
+	background: #ddd;
+}
+
+.greenItem {
+	background: green;
+    padding: 6px 10px;
+}
+
+.blueItem {
+	background: blue;
+    padding: 6px 10px;
+}
+
+.orangeItem {
+	background: orange;
+    padding: 6px 10px;
+}
+
+.redItem {
+	background: #b50101;
+    padding: 6px 10px;
+}
+
+.graybox .graphItem {
+   /* background-color: #b50101; rgb(139, 0, 0); */
+   padding: 0px 0px;
+}
+
+.graph_info p {
+	text-align: left;
+}
+
+.mar-right-20 {
+
+    margin-right: 300px;
+
+}
+
+.mar-left-20 {
+
+    margin-left: 300px;
+}
